@@ -4,6 +4,8 @@ import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
 from torchtext.datasets import AG_NEWS
 
+# Test Commit
+
 # A simple function to convert text into a fixed-size vector
 def text_to_vector(text, vector_size=100):
     vector = torch.zeros(vector_size)
