@@ -1,4 +1,3 @@
-version: "3.8"
 
 services:
   bot:
@@ -6,3 +5,11 @@ services:
     environment:
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - NEWS_API_KEY=${NEWS_API_KEY}
+    volumes:
+      - ./bot:/app/bot
+      - ./.env:/app/.env
+    devices:
+      - /dev/kfd:/dev/kfd
+      - /dev/dri:/dev/dri
+    group_add:
+      - video

@@ -1,22 +1,16 @@
-# Use an official lightweight Python image.
-FROM python:3.9-slim
+FROM rocm/pytorch:latest
 
-# Prevent Python from writing pyc files to disk and buffering stdout/stderr.
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-# Set the working directory in the container.
 WORKDIR /app
 
-# Copy requirements.txt into the container.
-COPY requirements.txt /app/
+# Copy and install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Upgrade pip and install dependencies.
-RUN pip install --upgrade pip && \
-    pip install -r requirements.txt
+# Copy the bot code (assuming bot.py is in the bot folder)
+COPY bot/ bot/
 
-# Copy the rest of your application code into the container.
-COPY bot/ /app/bot/
+# Set the working directory to the bot folder
+WORKDIR /app/bot
 
-# Specify the command to run your bot.
-CMD ["python", "bot/bot.py"]
+# Run the bot
+CMD ["python", "bot.py"]
