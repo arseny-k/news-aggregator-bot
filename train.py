@@ -2,11 +2,9 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
-from torchtext.datasets import AG_NEWS
+from datasets import load_dataset
 
-# Test Commit
-
-# A simple function to convert text into a fixed-size vector
+# Convert text into a fixed-size vector (naive character-based approach)
 def text_to_vector(text, vector_size=100):
     vector = torch.zeros(vector_size)
     text = text or ""
@@ -14,7 +12,7 @@ def text_to_vector(text, vector_size=100):
         vector[i % vector_size] += ord(char)
     return vector / (len(text) if len(text) > 0 else 1)
 
-# Define a simple PyTorch model for classification
+# Define a simple classifier model
 class NewsClassifier(nn.Module):
     def __init__(self, input_size, hidden_size, num_classes):
         super(NewsClassifier, self).__init__()
@@ -28,26 +26,26 @@ class NewsClassifier(nn.Module):
         out = self.fc2(out)
         return out
 
-# Create a custom Dataset for the AG_NEWS dataset
+# Custom Dataset using Hugging Face's datasets library
 class AGNewsDataset(Dataset):
-    def __init__(self, split='train', vector_size=100, max_samples=None):
-        # Load AG_NEWS; each item is a tuple: (label, text)
-        self.data = list(AG_NEWS(split=split))
+    def __init__(self, split="train", vector_size=100, max_samples=None):
+        # Load the AG News dataset
+        self.dataset = load_dataset("ag_news", split=split)
         if max_samples is not None:
-            self.data = self.data[:max_samples]
+            self.dataset = self.dataset.select(range(max_samples))
         self.vector_size = vector_size
-        
+
     def __len__(self):
-        return len(self.data)
-    
+        return len(self.dataset)
+
     def __getitem__(self, idx):
-        label, text = self.data[idx]
-        # AG_NEWS labels are 1-indexed, so subtract 1 for 0-indexing
-        label = label - 1
+        sample = self.dataset[idx]
+        text = sample["text"]
+        label = sample["label"]  # Labels are already 0-indexed in this dataset
         vector = text_to_vector(text, self.vector_size)
         return vector, label
 
-# Training loop
+# Training loop function
 def train_model(model, dataloader, epochs=10, lr=0.001):
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=lr)
@@ -55,9 +53,10 @@ def train_model(model, dataloader, epochs=10, lr=0.001):
     for epoch in range(epochs):
         model.train()
         running_loss = 0.0
+        
         for inputs, labels in dataloader:
-            inputs = inputs.float()  # Ensure inputs are floats
-            labels = labels.long()   # Ensure labels are longs
+            inputs = inputs.float()
+            labels = labels.long()
             
             optimizer.zero_grad()
             outputs = model(inputs)
@@ -72,24 +71,21 @@ def train_model(model, dataloader, epochs=10, lr=0.001):
     
     print("Training complete.")
 
-# Define training parameters
+# Parameters for our model and training
 INPUT_SIZE = 100
 HIDDEN_SIZE = 50
-NUM_CLASSES = 4  # AG_NEWS dataset has 4 categories: typically "World", "Sports", "Business", "Sci/Tech"
-
-# Define category names for reference
-categories = ["World", "Sports", "Business", "Sci/Tech"]
+NUM_CLASSES = 4  # AG News has 4 classes: e.g., World, Sports, Business, Sci/Tech
 
 # Instantiate the model
 model = NewsClassifier(INPUT_SIZE, HIDDEN_SIZE, NUM_CLASSES)
 
 # Create the dataset and dataloader (limiting samples for quicker training; remove max_samples for full training)
-dataset = AGNewsDataset(split='train', vector_size=INPUT_SIZE, max_samples=1000)
+dataset = AGNewsDataset(split="train", vector_size=INPUT_SIZE, max_samples=1000)
 dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
 
 # Train the model
 train_model(model, dataloader, epochs=10, lr=0.001)
 
-# Save the trained model
+# Save the trained model weights
 torch.save(model.state_dict(), "ag_news_classifier.pth")
 print("Model saved to ag_news_classifier.pth")

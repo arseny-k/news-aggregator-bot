@@ -45,6 +45,18 @@ NUM_CLASSES = len(categories)
 model = NewsClassifier(input_size=INPUT_SIZE, hidden_size=HIDDEN_SIZE, num_classes=NUM_CLASSES)
 model.eval()
 
+
+# Instantiate the model.
+model = NewsClassifier(INPUT_SIZE, HIDDEN_SIZE, NUM_CLASSES)
+
+# Try to load trained weights.
+try:
+    model.load_state_dict(torch.load("ag_news_classifier.pth"))
+    model.eval()
+    print("Loaded trained model weights.")
+except FileNotFoundError:
+    print("Trained model weights not found, using untrained model.")
+
 def get_news():
     url = f"https://newsapi.org/v2/top-headlines?country=us&apiKey={NEWS_API_KEY}"
     try:
