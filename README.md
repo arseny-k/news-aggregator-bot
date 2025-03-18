@@ -43,7 +43,7 @@ TELEGRAM_BOT_TOKEN=your_telegram_bot_token
 NEWS_API_KEY=your_news_api_key
 ```
 
-## Training the Model
+### 3. Training the Model
 
 The train.py script fine-tunes a transformer model (e.g., distilbert-base-uncased) on the AG News dataset.
 
@@ -55,7 +55,7 @@ python train.py
 
 After training, the best model is saved in the `./trained_news_model` directory. Make sure this directory is available for the bot.
 
-## Running with Docker
+### 4. Running with Docker
 
 The project includes a Dockerfile and docker-compose.yml for containerized deployment.
 Build and Run Containers
@@ -66,7 +66,6 @@ Build the Docker images and start containers:
 docker-compose up --build
 ```
 The bot container will start, and you can interact with the Telegram bot as usual.
-
 
 ## Bot Commands
 
