@@ -2,3 +2,5 @@ torch
 requests
 python-telegram-bot
 python-dotenv
+transformers
+numpy
