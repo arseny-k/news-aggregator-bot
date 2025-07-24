@@ -5,11 +5,7 @@ Telegram News Bot is a Telegram-based news aggregator that fetches the latest he
 ## Features
 
 - **News Aggregation:** Retrieves top headlines from the US using NewsAPI.
-- **News Classification:** Uses a fine-tuned transformer model (e.g., DistilBERT) to classify news into:
-  - World
-  - Sports
-  - Business
-  - Sci/Tech
+- **News Classification:** Uses a fine-tuned transformer model (e.g., DistilBERT) to classify news.
 - **User Personalization:** Users can hide specific categories using the `/hide` command.
 - **Random News:** Get a single random news article with the `/random` command.
 - **Avoid Repetition:** Tracks shown news articles to prevent repeats.
@@ -30,8 +26,8 @@ Telegram News Bot is a Telegram-based news aggregator that fetches the latest he
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/telegram-news-bot.git
-cd telegram-news-bot
+git clone https://github.com/arseny-k/news-aggregator-bot.git
+cd news-aggregator-bot
 ```
 
 ### 2. Environment Setup
